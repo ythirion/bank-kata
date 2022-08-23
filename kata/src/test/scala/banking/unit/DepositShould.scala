@@ -21,7 +21,7 @@ class DepositShould
     with Matchers
     with OneInstancePerTest {
   private val transactionTime: LocalDateTime = aLocalDateTime
-  private val depositOf1000 = Deposit(anAccountId, 1000)
+  private val depositOf1000 = createDepositCommand(1000)
 
   private val clockStub: Clock = stub[Clock]
   (clockStub.now _).when().returns(transactionTime)
@@ -37,7 +37,7 @@ class DepositShould
   it should "return a failure for an existing account and a deposit of <= 0" in {
     existingAccount()
     assertErrorForNegativeOrEqualTo0Amount[Deposit](
-      invalidAmount => Deposit(anAccountId, invalidAmount),
+      invalidAmount => createDepositCommand(invalidAmount),
       deposit => depositUseCase.invoke(deposit),
       "Invalid amount for deposit",
       0,
@@ -75,6 +75,9 @@ class DepositShould
       )
     )
   }
+
+  private def createDepositCommand(amount: Double): Deposit =
+    Deposit(anAccountId, amount)
 
   private def assertAccountHasBeenCorrectlyUpdated(
       newAccount: Either[String, Account],

@@ -21,7 +21,7 @@ class WithdrawShould
   it should "return a failure for a non existing account" in {
     notExistingAccount()
     withdrawUseCase
-      .invoke(Withdraw(anAccountId, 100))
+      .invoke(createWithdrawCommand(100))
       .left
       .get mustBe "Unknown account"
   }
@@ -30,7 +30,7 @@ class WithdrawShould
     existingAccount()
 
     assertErrorForNegativeOrEqualTo0Amount[Withdraw](
-      invalidAmount => Withdraw(anAccountId, invalidAmount),
+      invalidAmount => createWithdrawCommand(invalidAmount),
       withdraw => withdrawUseCase.invoke(withdraw),
       "Invalid amount for withdraw",
       0,
@@ -39,4 +39,16 @@ class WithdrawShould
       NegativeInfinity
     )
   }
+
+  it should "return a failure because not enough money available for an existing account with not enough money & a withdraw of 100" in {
+    existingAccount()
+
+    withdrawUseCase
+      .invoke(createWithdrawCommand(100))
+      .left
+      .get mustBe "Not enough money to withdraw 100.0"
+  }
+
+  private def createWithdrawCommand(invalidAmount: Double) =
+    Withdraw(anAccountId, invalidAmount)
 }
