@@ -13,6 +13,7 @@ import org.scalatest.{EitherValues, OneInstancePerTest}
 
 import java.time.LocalDateTime
 import java.util.UUID
+import scala.Double._
 
 class DepositShould
     extends AnyFlatSpec
@@ -28,25 +29,27 @@ class DepositShould
   private val clockStub: Clock = stub[Clock]
   (clockStub.now _).when().returns(transactionTime)
 
-  private val depositUseCase = new DepositUseCase(accountRepositoryStub, clockStub)
+  private val depositUseCase =
+    new DepositUseCase(accountRepositoryStub, clockStub)
 
   it should "return a failure for a non existing account" in {
     notExistingAccount()
     depositUseCase.invoke(depositOf1000).left.get mustBe "Unknown account"
   }
 
-  it should "return a failure for an existing account and a deposit of 0" in {
-    val invalidDeposit = Deposit(anAccountId, 0)
+  it should "return a failure for an existing account and a deposit of <= 0" in {
     existingAccount()
-
-    depositUseCase.invoke(invalidDeposit).left.get mustBe "Invalid amount for deposit"
+    assertErrorForNegativeOrEqualTo0Amount(0, -1, -1000, NegativeInfinity)
   }
 
   it should "store the updated account containing a Transaction(transactionTime, 1000) for an existing account and a deposit of 1000" in {
     existingAccount()
     val newAccount = depositUseCase.invoke(depositOf1000)
 
-    assertAccountHasBeenCorrectlyUpdated(newAccount, List(Transaction(transactionTime, 1000)))
+    assertAccountHasBeenCorrectlyUpdated(
+      newAccount,
+      List(Transaction(transactionTime, 1000))
+    )
   }
 
   it should "store the updated account containing a Transaction(transactionTime, 1000) for an existing account containing already a Transaction(09/10/1987, -200) and a deposit of 1000" in {
@@ -94,4 +97,12 @@ class DepositShould
       .verify(newAccount.right.value)
       .once()
   }
+
+  private def assertErrorForNegativeOrEqualTo0Amount(amounts: Double*): Unit =
+    amounts.foreach { invalidAmount =>
+      depositUseCase
+        .invoke(Deposit(anAccountId, invalidAmount))
+        .left
+        .get mustBe "Invalid amount for deposit"
+    }
 }
