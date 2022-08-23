@@ -1,10 +1,9 @@
 package banking.unit
 
-import banking.AccountBuilder
 import banking.DataForTests._
 import banking.TransactionBuilder.aNewTransaction
 import banking.commands.Deposit
-import banking.domain.{Account, AccountRepository, Clock, Transaction}
+import banking.domain.{Account, Clock, Transaction}
 import banking.usecases.DepositUseCase
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.flatspec.AnyFlatSpec
@@ -12,20 +11,18 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.{EitherValues, OneInstancePerTest}
 
 import java.time.LocalDateTime
-import java.util.UUID
 import scala.Double._
 
 class DepositShould
     extends AnyFlatSpec
+    with AccountUseCaseTest
     with MockFactory
     with EitherValues
     with Matchers
     with OneInstancePerTest {
-  private val anAccountId = UUID.randomUUID()
   private val transactionTime: LocalDateTime = aLocalDateTime
   private val depositOf1000 = Deposit(anAccountId, 1000)
 
-  private val accountRepositoryStub = stub[AccountRepository]
   private val clockStub: Clock = stub[Clock]
   (clockStub.now _).when().returns(transactionTime)
 
@@ -70,23 +67,6 @@ class DepositShould
       )
     )
   }
-
-  private def notExistingAccount(): Unit =
-    (accountRepositoryStub.find _)
-      .when(anAccountId)
-      .returns(None)
-
-  private def existingAccount(transactions: Transaction*): Unit =
-    (accountRepositoryStub.find _)
-      .when(anAccountId)
-      .returns(
-        Some(
-          AccountBuilder
-            .aNewAccount(anAccountId)
-            .containing(transactions.toList)
-            .build()
-        )
-      )
 
   private def assertAccountHasBeenCorrectlyUpdated(
       newAccount: Either[String, Account],
