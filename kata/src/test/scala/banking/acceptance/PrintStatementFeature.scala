@@ -15,10 +15,12 @@ class PrintStatementFeature extends AnyFlatSpec with Matchers with MockFactory {
 
   private val printerStub = stubFunction[String, Unit]
   private val accountRepositoryStub = stub[AccountRepository]
+  private val clockStub = stub[Clock]
 
   private val depositUseCase =
-    new DepositUseCase(accountRepositoryStub, stub[Clock])
-  private val withDrawUseCase = new WithdrawUseCase(accountRepositoryStub)
+    new DepositUseCase(accountRepositoryStub, clockStub)
+  private val withDrawUseCase =
+    new WithdrawUseCase(accountRepositoryStub, clockStub)
   private val printStatementUseCase = new PrintStatementUseCase(printerStub)
 
   it should "print statement containing all the transactions" in {

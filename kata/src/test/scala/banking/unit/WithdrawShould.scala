@@ -1,6 +1,8 @@
 package banking.unit
 
+import banking.TransactionBuilder.aNewTransaction
 import banking.commands.Withdraw
+import banking.domain.Transaction
 import banking.usecases.WithdrawUseCase
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.flatspec.AnyFlatSpec
@@ -16,7 +18,8 @@ class WithdrawShould
     with EitherValues
     with Matchers
     with OneInstancePerTest {
-  private val withdrawUseCase = new WithdrawUseCase(accountRepositoryStub)
+  private val withdrawUseCase =
+    new WithdrawUseCase(accountRepositoryStub, clockStub)
 
   it should "return a failure for a non existing account" in {
     notExistingAccount()
@@ -49,6 +52,43 @@ class WithdrawShould
       .get mustBe "Not enough money to withdraw 100.0"
   }
 
-  private def createWithdrawCommand(invalidAmount: Double) =
-    Withdraw(anAccountId, invalidAmount)
+  it should "store the updated account containing a Transaction(transactionTime, -900) for an existing account containing enough money to withdraw" in {
+    val formerTransactions =
+      List(aNewTransaction().of(500).build(), aNewTransaction().of(500).build())
+
+    existingAccount(formerTransactions)
+
+    val newAccount = withdrawUseCase.invoke(createWithdrawCommand(900))
+
+    assertAccountHasBeenCorrectlyUpdated(
+      newAccount,
+      Transaction(
+        transactionTime,
+        -900
+      ) :: formerTransactions
+    )
+  }
+
+  it should "be able to withdraw the whole account amount" in {
+    val formerTransaction = aNewTransaction().of(1000).build()
+
+    existingAccount(formerTransaction)
+
+    val newAccount =
+      withdrawUseCase.invoke(createWithdrawCommand(formerTransaction.amount))
+
+    assertAccountHasBeenCorrectlyUpdated(
+      newAccount,
+      List(
+        Transaction(
+          transactionTime,
+          -1000
+        ),
+        formerTransaction
+      )
+    )
+  }
+
+  private def createWithdrawCommand(amount: Double) =
+    Withdraw(anAccountId, amount)
 }

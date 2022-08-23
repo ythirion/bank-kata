@@ -3,14 +3,13 @@ package banking.unit
 import banking.DataForTests._
 import banking.TransactionBuilder.aNewTransaction
 import banking.commands.Deposit
-import banking.domain.{Account, Clock, Transaction}
+import banking.domain.Transaction
 import banking.usecases.DepositUseCase
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{EitherValues, OneInstancePerTest}
 
-import java.time.LocalDateTime
 import scala.Double._
 
 class DepositShould
@@ -20,11 +19,7 @@ class DepositShould
     with EitherValues
     with Matchers
     with OneInstancePerTest {
-  private val transactionTime: LocalDateTime = aLocalDateTime
   private val depositOf1000 = createDepositCommand(1000)
-
-  private val clockStub: Clock = stub[Clock]
-  (clockStub.now _).when().returns(transactionTime)
 
   private val depositUseCase =
     new DepositUseCase(accountRepositoryStub, clockStub)
@@ -78,14 +73,4 @@ class DepositShould
 
   private def createDepositCommand(amount: Double): Deposit =
     Deposit(anAccountId, amount)
-
-  private def assertAccountHasBeenCorrectlyUpdated(
-      newAccount: Either[String, Account],
-      expectedTransactions: List[Transaction]
-  ): Unit = {
-    newAccount.right.value.transactions mustBe expectedTransactions
-    (accountRepositoryStub.save _)
-      .verify(newAccount.right.value)
-      .once()
-  }
 }
