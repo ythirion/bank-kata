@@ -1,12 +1,13 @@
 package banking.unit
 
 import banking.AccountBuilder
-import banking.domain.{AccountRepository, Transaction}
+import banking.domain.{Account, AccountRepository, Transaction}
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.matchers.must.Matchers
 
 import java.util.UUID
 
-trait AccountUseCaseTest extends MockFactory {
+trait AccountUseCaseTest extends MockFactory with Matchers {
   protected val anAccountId: UUID = UUID.randomUUID()
   protected val accountRepositoryStub: AccountRepository =
     stub[AccountRepository]
@@ -27,4 +28,14 @@ trait AccountUseCaseTest extends MockFactory {
             .build()
         )
       )
+
+  protected def assertErrorForNegativeOrEqualTo0Amount[TCommand](
+      commandFactory: Double => TCommand,
+      useCase: TCommand => Either[String, Account],
+      expectedMessage: String,
+      invalidAmounts: Double*
+  ): Unit =
+    invalidAmounts.foreach { invalidAmount =>
+      useCase(commandFactory(invalidAmount)).left.get mustBe expectedMessage
+    }
 }

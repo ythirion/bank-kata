@@ -1,9 +1,12 @@
 package banking.usecases
 
 import banking.commands.Withdraw
-import banking.domain.Account
+import banking.domain.{Account, AccountRepository}
 
-class WithdrawUseCase() {
+class WithdrawUseCase(accountRepository: AccountRepository) {
   def invoke(withdraw: Withdraw): Either[String, Account] =
-    Left("Unknown account")
+    accountRepository.find(withdraw.accountId) match {
+      case Some(account) => Left("Invalid amount for withdraw")
+      case None          => Left("Unknown account")
+    }
 }

@@ -36,7 +36,15 @@ class DepositShould
 
   it should "return a failure for an existing account and a deposit of <= 0" in {
     existingAccount()
-    assertErrorForNegativeOrEqualTo0Amount(0, -1, -1000, NegativeInfinity)
+    assertErrorForNegativeOrEqualTo0Amount[Deposit](
+      invalidAmount => Deposit(anAccountId, invalidAmount),
+      deposit => depositUseCase.invoke(deposit),
+      "Invalid amount for deposit",
+      0,
+      -1,
+      -1000,
+      NegativeInfinity
+    )
   }
 
   it should "store the updated account containing a Transaction(transactionTime, 1000) for an existing account and a deposit of 1000" in {
@@ -77,12 +85,4 @@ class DepositShould
       .verify(newAccount.right.value)
       .once()
   }
-
-  private def assertErrorForNegativeOrEqualTo0Amount(amounts: Double*): Unit =
-    amounts.foreach { invalidAmount =>
-      depositUseCase
-        .invoke(Deposit(anAccountId, invalidAmount))
-        .left
-        .get mustBe "Invalid amount for deposit"
-    }
 }
