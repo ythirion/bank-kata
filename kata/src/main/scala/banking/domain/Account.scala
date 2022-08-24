@@ -1,5 +1,6 @@
 package banking.domain
 
+import java.time.ZoneOffset
 import java.util.UUID
 
 case class Account(id: UUID, transactions: List[Transaction] = List()) {
@@ -15,6 +16,11 @@ case class Account(id: UUID, transactions: List[Transaction] = List()) {
       else addTransaction(clock, -validAmount)
     }
   }
+
+  def toStatement(statementFormatter: StatementFormatter): String =
+    statementFormatter.format(
+      transactions.sortBy(_.at.toEpochSecond(ZoneOffset.UTC))
+    )
 
   private def validateAmount(amount: Double, invalidAmountMessage: String)(
       onValidAmount: Double => Either[String, Account]

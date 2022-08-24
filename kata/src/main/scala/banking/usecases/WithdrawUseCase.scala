@@ -3,12 +3,14 @@ package banking.usecases
 import banking.commands.Withdraw
 import banking.domain.{Account, AccountRepository, Clock}
 
-class WithdrawUseCase(accountRepository: AccountRepository, clock: Clock) {
+class WithdrawUseCase(accountRepository: AccountRepository, clock: Clock)
+    extends AccountUseCase {
   def invoke(withdraw: Withdraw): Either[String, Account] =
-    accountRepository.find(withdraw.accountId) match {
-      case Some(account) => withdrawSafely(withdraw, account)
-      case None          => Left("Unknown account")
-    }
+    invokeWhenAccountExists(
+      accountRepository,
+      withdraw.accountId,
+      account => withdrawSafely(withdraw, account)
+    )
 
   private def withdrawSafely(
       withdraw: Withdraw,

@@ -1,5 +1,6 @@
 package banking.acceptance
 
+import banking.adapters.ConsoleFormatter
 import banking.commands
 import banking.commands.{Deposit, PrintStatement, Withdraw}
 import banking.domain.{AccountRepository, Clock}
@@ -21,7 +22,12 @@ class PrintStatementFeature extends AnyFlatSpec with Matchers with MockFactory {
     new DepositUseCase(accountRepositoryStub, clockStub)
   private val withDrawUseCase =
     new WithdrawUseCase(accountRepositoryStub, clockStub)
-  private val printStatementUseCase = new PrintStatementUseCase(printerStub)
+  private val printStatementUseCase =
+    new PrintStatementUseCase(
+      accountRepositoryStub,
+      printerStub,
+      ConsoleFormatter()
+    )
 
   it should "print statement containing all the transactions" in {
     val accountId = UUID.randomUUID()

@@ -115,3 +115,4 @@ In general, we recommend `unit testing Use Cases and Gateways` (**Approach 2**) 
 ### Let's Unit Test
 - [Deposit](kata/docs/2.deposit.md)
 - [Withdraw](kata/docs/3.withdraw.md)
+- [Print Statement](kata/docs/4.print-statement.md)
