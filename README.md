@@ -48,6 +48,8 @@ Scenario: Printing statement after transactions
 ## Add an acceptance test
 Let's add an acceptance test that will guide us through our implementation.
 
+Step-by-step [here](kata/docs/1.acceptance-tests.md)
+
 ## TDD Loops
 Go down to the Unit Level and work on a first `Use Case`
 
