@@ -116,3 +116,7 @@ In general, we recommend `unit testing Use Cases and Gateways` (**Approach 2**) 
 - [Deposit](kata/docs/2.deposit.md)
 - [Withdraw](kata/docs/3.withdraw.md)
 - [Print Statement](kata/docs/4.print-statement.md)
+
+### Let's make our Acceptance Test green
+Now that we have made our TDD loops at the `UseCase` level we can focus on making our `acceptance test` green.
+Details [here](kata/docs/5.finish-acceptance-test.md)
