@@ -9,6 +9,7 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.must.Matchers
 
+import java.time.LocalDateTime
 import java.util.UUID
 
 class PrintStatementFeature extends AnyFlatSpec with Matchers with MockFactory {
@@ -32,9 +33,9 @@ class PrintStatementFeature extends AnyFlatSpec with Matchers with MockFactory {
     )
 
   it should "print statement containing all the transactions" in {
-    depositUseCase.invoke(Deposit(accountId, 1000d))
-    depositUseCase.invoke(commands.Deposit(accountId, 2000d))
-    withDrawUseCase.invoke(Withdraw(accountId, 500d))
+    onDay(12)(_ => depositUseCase.invoke(Deposit(accountId, 1000d)))
+    onDay(18)(_ => depositUseCase.invoke(commands.Deposit(accountId, 2000d)))
+    onDay(19)(_ => withDrawUseCase.invoke(Withdraw(accountId, 500d)))
 
     printStatementUseCase.invoke(PrintStatement(accountId))
 
@@ -46,5 +47,14 @@ class PrintStatementFeature extends AnyFlatSpec with Matchers with MockFactory {
           |12-01-2022 |  1000.00 |          |  1000.00""".stripMargin
       )
       .once()
+  }
+
+  private def onDay(day: Int)(invoke: Unit => Unit): Unit = {
+    (clockStub.now _)
+      .when()
+      .returns(LocalDateTime.of(2022, 1, day, 0, 0))
+      .noMoreThanOnce()
+
+    invoke(accountId)
   }
 }
