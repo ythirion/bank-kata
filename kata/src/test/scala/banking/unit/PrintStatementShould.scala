@@ -67,11 +67,9 @@ class PrintStatementShould
       .invoke(PrintStatement(anAccountId))
       .isRight mustBe true
 
-    inSequence {
-      printerStub.verify("date       |   credit |    debit |  balance").once()
-      printerStub.verify("13-08-2022 |  3678.54 |          | 17866.56").once()
-      printerStub.verify("13-08-2022 |          |  5890.87 | 14188.02").once()
-      printerStub.verify("31-12-2021 | 20078.89 |          | 20078.89").once()
-    }
+    printerStub.verify("""date       |   credit |    debit |  balance
+        |13-08-2022 |  3678.54 |          | 17866.56
+        |13-08-2022 |          |  5890.87 | 14188.02
+        |31-12-2021 | 20078.89 |          | 20078.89""".stripMargin).once()
   }
 }

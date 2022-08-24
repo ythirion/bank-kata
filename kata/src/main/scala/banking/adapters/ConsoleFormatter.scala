@@ -7,39 +7,63 @@ import java.text.DecimalFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter._
+import scala.math.abs
 
 case class ConsoleFormatter() extends StatementFormatter {
   private val dateTimeFormatter: DateTimeFormatter = ofPattern("dd-MM-yyyy")
   private val decimalFormatter: DecimalFormat = new DecimalFormat("#.00")
-  private val cellSpace: Int = 8
 
+  private val cellSpace: Int = 8
   private val header: String = "date       |   credit |    debit |  balance"
 
   override def format(transactions: List[Transaction]): String =
-    header + lineSeparator() + formatTransactions(transactions)
+    header + formatTransactions(transactions)
 
   private def formatTransactions(transactions: List[Transaction]): String =
-    transactions
-      .map(transaction => formatLine(transaction, 0))
+    if (transactions.isEmpty) ""
+    else lineSeparator() + toStatementLines(transactions)
+
+  private def toStatementLines(transactions: List[Transaction]): String =
+    transactions.zipWithIndex
+      .map {
+        case (transaction, index) =>
+          toLine(transaction, balanceFor(transactions, index))
+      }
       .mkString(lineSeparator())
 
-  private def formatLine(
+  private def toLine(
       transaction: Transaction,
-      currentBalance: Double
+      balance: Double
   ): String =
-    s"${formatDate(transaction.at)} | ${formatAmount(transaction.amount)} | $currentBalance"
+    s"${formatDate(transaction.at)} | ${amountOrEmptyCell(transaction.amount, amount => amount > 0)} | " +
+      s"${amountOrEmptyCell(transaction.amount, amount => amount < 0)} | ${formatAmount(balance)}"
 
-  private def formatDate(date: LocalDateTime): String =
-    dateTimeFormatter.format(date)
+  private def balanceFor(transactions: List[Transaction], index: Int): Double =
+    transactions
+      .drop(index)
+      .map(_.amount)
+      .sum
 
-  private def formatAmount(amount: Double) =
+  private def amountOrEmptyCell(
+      amount: Double,
+      shouldBeUsed: Double => Boolean
+  ): String =
+    if (shouldBeUsed(amount)) formatAmount(abs(amount))
+    else emptyCell()
+
+  private def formatAmount(amount: Double): String =
     prefixWithEmptySpace(
       decimalFormatter.format(amount),
       cellSpace
     )
 
+  private def formatDate(date: LocalDateTime): String =
+    dateTimeFormatter.format(date)
+
   private def prefixWithEmptySpace(str: String, targetLength: Int): String =
     s"${generateEmptyString(targetLength - str.length)}$str"
+
+  private def emptyCell(): String = generateEmptyString(cellSpace)
 
   private def generateEmptyString(length: Int): String =
     (1 to length)
