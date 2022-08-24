@@ -6,11 +6,9 @@ import banking.domain.{Account, AccountRepository, Clock}
 class DepositUseCase(accountRepository: AccountRepository, clock: Clock)
     extends AccountUseCase {
   def invoke(deposit: Deposit): Either[String, Account] =
-    invokeWhenAccountExists(
-      accountRepository,
-      deposit.accountId,
-      account => depositSafely(deposit, account)
-    )
+    invokeWhenAccountExists(accountRepository, deposit.accountId) { account =>
+      depositSafely(deposit, account)
+    }
 
   private def depositSafely(
       deposit: Deposit,

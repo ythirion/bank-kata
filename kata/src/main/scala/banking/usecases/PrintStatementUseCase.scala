@@ -9,14 +9,12 @@ class PrintStatementUseCase(
     statementFormatter: StatementFormatter
 ) extends AccountUseCase {
   def invoke(printStatement: PrintStatement): Either[String, Unit] =
-    invokeWhenAccountExists(
-      accountRepository,
-      printStatement.accountId,
+    invokeWhenAccountExists(accountRepository, printStatement.accountId) {
       account =>
         Right(
           printer(
             account.toStatement(statementFormatter)
           )
         )
-    )
+    }
 }
