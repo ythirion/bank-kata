@@ -19,7 +19,9 @@ case class Account(id: UUID, transactions: List[Transaction] = List()) {
 
   def toStatement(statementFormatter: StatementFormatter): String =
     statementFormatter.format(
-      transactions.sortBy(_.at.toEpochSecond(ZoneOffset.UTC))
+      transactions
+        .sortBy(_.at.toEpochSecond(ZoneOffset.UTC))
+        .reverse
     )
 
   private def validateAmount(amount: Double, invalidAmountMessage: String)(

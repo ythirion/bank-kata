@@ -14,7 +14,9 @@ class PrintStatementUseCase(
       printStatement.accountId,
       account =>
         Right(
-          printer(account.toStatement(statementFormatter))
+          printer(
+            account.toStatement(statementFormatter)
+          )
         )
     )
 }
