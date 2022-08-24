@@ -48,6 +48,8 @@ Scenario: Printing statement after transactions
 ## Add an acceptance test
 Let's add an acceptance test that will guide us through our implementation.
 
+Step-by-step [here](kata/docs/1.acceptance-tests.md)
+
 ## TDD Loops
 Go down to the Unit Level and work on a first `Use Case`
 
@@ -112,3 +114,29 @@ In general, we recommend `unit testing Use Cases and Gateways` (**Approach 2**) 
 
 ### Let's Unit Test
 - [Deposit](kata/docs/2.deposit.md)
+- [Withdraw](kata/docs/3.withdraw.md)
+- [Print Statement](kata/docs/4.print-statement.md)
+
+### Let's make our Acceptance Test green
+Now that we have made our TDD loops at the `UseCase` level we can focus on making our `acceptance test` green.
+![Make it green](img/green-again.png)
+
+> What could be the next steps?
+
+Details [here](kata/docs/5.finish-acceptance-test.md)
+
+### Conclusion
+- What do you think of this TDD approach?
+- What is the impact of the Clean Architecture? (think about readability, discoverability of your code)
+- What is the impact of it on code coverage?
+
+![Code coverage](img/coverage-trend.png)
+
+![The end](img/end.png)
+
+### Resources
+- [Original kata](https://github.com/sandromancuso/Bank-kata)
+- [Outside In TDD in React](https://youtu.be/20jEMBTGVG4)
+- [Growing Object-Oriented Software Guided by Tests - Steve Freeman & Nat Pryce](http://www.growing-object-oriented-software.com/)
+
+[![Outside In TDD by Sandro Mancuso](img/outside-in-tdd-codurance.png)](https://youtu.be/XHnuMjah6ps)
