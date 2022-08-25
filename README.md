@@ -2,7 +2,7 @@
 
 ## Objectives
 Think of your personal bank account experience
-When in doubt, go for the simplest solution
+When in doubt, go for the simplest solution.
 
 ## Problem Description
 Create a simple bank system with the following features :
@@ -43,7 +43,7 @@ Scenario: Printing statement after transactions
 ![TDD double loop](img/tdd-double-loop.png)
 
 ## Clean Architecture
-[![Clean architecture schema from cleancoder](https://blog.cleancoder.com/uncle-bob/images/2012-08-13-the-clean-architecture/CleanArchitecture.jpg)](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+![Clean architecture schema from cleancoder](img/clean-architecture.jpg)
 
 ## Add an acceptance test
 Let's add an acceptance test that will guide us through our implementation.
@@ -51,18 +51,17 @@ Let's add an acceptance test that will guide us through our implementation.
 Step-by-step [here](kata/docs/1.acceptance-tests.md)
 
 ## TDD Loops
-Go down to the Unit Level and work on a first `Use Case`
+Go at the Unit Test Level and work on a first `Use Case`.
 
-> What is the responsibility of the Use Case?
+> What is the responsibility of Use Cases?
 
-- Fetch a database to identify if the `account` exists in the system
-  - If so, delegate the business logic to the `domain` entity then `store` the new state
-  - If no, return a failure
+Fetch a repository to identify if the `account` exists in the system
+- If so, delegate the business logic to the `domain` entity then `store` the new state
+- If no, return a failure
 
 ### How to test "Use Cases"?
+We have several approaches we could use regarding testing Use Cases.
 [![Valentina's talk @Software Craft Luxembourg Meetup](img/valentinas-talk.png)](https://youtu.be/IZWLnn2fNko)
-
-Several Options
 
 #### Approach 1 - Testing Use Cases, Gateways & Domain
 ![Approach 1](img/approach1.png)
@@ -103,7 +102,7 @@ Several Options
 - Highest test robustness because the tests are coupled only to Use Cases, nothing else
 
 ❌ Disadvantages
-- Unable to verify side-effects on the Gateways in cases where such side-effects are not visible through Use Cases (e.g. the system sets some internal numbers or timestamps on entities updated to the repository, but not exposed through any query Use Cases)
+- Unable to verify side effects on the Gateways in cases where such side-effects are not visible through Use Cases (e.g. the system sets some internal numbers or timestamps on entities updated to the repository, but not exposed through any query Use Cases)
 
 #### Which one to choose?
 In general, we recommend `unit testing Use Cases and Gateways` (**Approach 2**) because:
@@ -112,7 +111,7 @@ In general, we recommend `unit testing Use Cases and Gateways` (**Approach 2**) 
 - High coverage at low test maintenance costs, thus increasing ROI
 - High test robustness, we can refactor the system safely without breaking tests
 
-### Let's Unit Test
+### TDD on Use Cases
 - [Deposit](kata/docs/2.deposit.md)
 - [Withdraw](kata/docs/3.withdraw.md)
 - [Print Statement](kata/docs/4.print-statement.md)
