@@ -29,7 +29,7 @@ class WithdrawShould
       .get mustBe "Unknown account"
   }
 
-  it should "return a failure for an existing account and a withdraw of <= 0" in {
+  it should "return a failure for an existing account and a withdrawal of <= 0" in {
     existingAccount()
 
     assertErrorForNegativeOrEqualTo0Amount[Withdraw](
@@ -43,7 +43,7 @@ class WithdrawShould
     )
   }
 
-  it should "return a failure because not enough money available for an existing account with not enough money & a withdraw of 100" in {
+  it should "return a failure because not enough money available for an existing account with not enough money & a withdrawal of 100" in {
     existingAccount()
 
     withdrawUseCase
