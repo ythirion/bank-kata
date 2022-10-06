@@ -24,9 +24,9 @@ Here is an acceptance scenario as described by one of our Domain Expert
 
 ```gherkin
 Scenario: Printing statement after transactions
-  Given a client makes a deposit of 1000 on 12-08-2022
-  And a deposit of 2000 on 18-08-2012
-  And a withdrawal of 500 on 19-01-2012
+  Given a client makes a deposit of 1000 on 12-01-2022
+  And a deposit of 2000 on 18-01-2022
+  And a withdrawal of 500 on 19-01-2022
   When he/she prints her bank statement
   Then he/she would see
   """
